@@ -31,7 +31,12 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
 
+        const toysCollection = client.db("tenJoyDB").collection("toysCollection");
 
+        app.get('/categoryToys', async(req, res) => {
+            const result = await toysCollection.find().toArray();
+            res.send(result);
+        })
 
 
         // Send a ping to confirm a successful connection
