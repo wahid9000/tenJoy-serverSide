@@ -33,52 +33,66 @@ async function run() {
         const toysCollection = client.db("tenJoyDB").collection("toysCollection");
 
 
-        app.get('/allToys', async(req, res) => {
+        app.get('/allToys', async (req, res) => {
             const result = await toysCollection.find().toArray();
             res.send(result);
         })
 
 
-        app.post('/allToys', async(req, res) => {
+        app.post('/allToys', async (req, res) => {
             const toys = req.body;
             const result = await toysCollection.insertOne(toys);
             res.send(result)
         })
 
-        app.get('/allToys/:id', async(req, res) => {
+        app.get('/allToys/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id: new ObjectId(id)};
+            const query = { _id: new ObjectId(id) };
             const result = await toysCollection.findOne(query);
             res.send(result)
         })
 
 
-        
-        app.get('/myToys', async(req, res) => {
+
+        app.get('/myToys', async (req, res) => {
             let query = {};
-            if(req.query?.email){
-                query = {sellerEmail : req.query.email}
+            if (req.query?.email) {
+                query = { sellerEmail: req.query.email }
             }
             const result = await toysCollection.find(query).toArray();
             res.send(result)
         })
 
 
-        app.get('/myToys/:id', async(req, res) => {
-            const id= req.params.id;
-            const query = {_id: new ObjectId(id)}
+        app.get('/myToys/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
             const result = await toysCollection.findOne(query);
             res.send(result)
         })
 
 
-        
-
-
-
-        app.delete('/myToys/:id', async(req, res) => {
+        app.put('/myToys/:id', async (req, res) => {
             const id = req.params.id;
-            query = {_id: new ObjectId(id)}
+            const filter = { _id: new ObjectId(id) }
+            const options = { upsert: true }
+            const toy = req.body;
+            const updateDoc = {
+                $set: {
+                    price : toy.price,
+                    quantity : toy.quantity,
+                    descriptions : toy.descriptions,
+                }
+            }
+            const result = await toysCollection.updateOne(filter, updateDoc, options)
+            res.send(result)
+        })
+
+
+
+        app.delete('/myToys/:id', async (req, res) => {
+            const id = req.params.id;
+            query = { _id: new ObjectId(id) }
             const result = await toysCollection.deleteOne(query);
             res.send(result);
         })
@@ -89,7 +103,7 @@ async function run() {
 
 
 
-       
+
 
 
         // Send a ping to confirm a successful connection
