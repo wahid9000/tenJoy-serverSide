@@ -32,10 +32,30 @@ async function run() {
 
         const toysCollection = client.db("tenJoyDB").collection("toysCollection");
 
+
         app.get('/allToys', async(req, res) => {
             const result = await toysCollection.find().toArray();
             res.send(result);
         })
+
+
+        app.post('/allToys', async(req, res) => {
+            const toys = req.body;
+            const result = await toysCollection.insertOne(toys);
+            res.send(result)
+        })
+
+        
+        app.get('/myToys', async(req, res) => {
+            let query = {};
+            if(req.query?.email){
+                query = {sellerEmail : req.query.email}
+            }
+            const result = await toysCollection.find(query).toArray();
+            res.send(result)
+        })
+
+
 
         app.get('/allToys/:id', async(req, res) => {
             const id = req.params.id;
