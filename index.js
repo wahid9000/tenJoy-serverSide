@@ -34,8 +34,8 @@ async function run() {
 
 
         app.get('/allToys', async (req, res) => {
-            const result = await toysCollection.find().toArray();
-            res.send(result);
+            const result = await toysCollection.find().limit(20).toArray();
+            res.send(result);  
         })
 
 
@@ -54,13 +54,25 @@ async function run() {
 
 
 
+
+        const indexKeys = {name: 1};
+        const indexOptions = {name: "name"}; 
+        const result = await toysCollection.createIndex(indexKeys, indexOptions);
+
+        app.get('/myToySearchByName/:text', async(req, res)=> {
+            const searchtext = req.params.text;
+            const result = await toysCollection.find({ name: {$regex: searchtext, $options: "i"} }).toArray();
+            res.send(result)
+        })
+
+
         app.get('/myToys', async (req, res) => {
             let query = {};
             if (req.query?.email) {
-                query = { sellerEmail: req.query.email }
+                query = { sellerEmail: req.query.email };
             }
-            const result = await toysCollection.find(query).toArray();
-            res.send(result)
+            const result = await toysCollection.find(query).sort({price: -1}).toArray();
+            res.send(result);
         })
 
 
