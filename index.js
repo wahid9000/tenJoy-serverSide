@@ -52,9 +52,7 @@ async function run() {
             res.send(result)
         })
 
-
-
-
+        //searching
         const indexKeys = {name: 1};
         const indexOptions = {name: "name"}; 
         const result = await toysCollection.createIndex(indexKeys, indexOptions);
