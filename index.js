@@ -57,7 +57,7 @@ async function run() {
         const indexOptions = { name: "name" };
         const result = await toysCollection.createIndex(indexKeys, indexOptions);
 
-        app.get('/myToySearchByName/:text', async (req, res) => {
+        app.get('/allToySearchByName/:text', async (req, res) => {
             const searchtext = req.params.text;
             const result = await toysCollection.find({ name: { $regex: searchtext, $options: "i" } }).toArray();
             res.send(result)
