@@ -35,7 +35,7 @@ async function run() {
 
         app.get('/allToys', async (req, res) => {
             const result = await toysCollection.find().limit(20).toArray();
-            res.send(result);  
+            res.send(result);
         })
 
 
@@ -53,24 +53,29 @@ async function run() {
         })
 
         //searching
-        const indexKeys = {name: 1};
-        const indexOptions = {name: "name"}; 
+        const indexKeys = { name: 1 };
+        const indexOptions = { name: "name" };
         const result = await toysCollection.createIndex(indexKeys, indexOptions);
 
-        app.get('/myToySearchByName/:text', async(req, res)=> {
+        app.get('/myToySearchByName/:text', async (req, res) => {
             const searchtext = req.params.text;
-            const result = await toysCollection.find({ name: {$regex: searchtext, $options: "i"} }).toArray();
+            const result = await toysCollection.find({ name: { $regex: searchtext, $options: "i" } }).toArray();
             res.send(result)
         })
 
 
         app.get('/myToys', async (req, res) => {
+
             let query = {};
             if (req.query?.email) {
-                query = { sellerEmail: req.query.email };
+                const query = { sellerEmail: req.query.email };
+                const sort = req?.query?.sort === 'true' ? 1 : -1;
+                const result = await toysCollection.find(query).sort({ price: sort }).toArray();
+                res.send(result);
             }
-            const result = await toysCollection.find(query).sort({price: -1}).toArray();
-            res.send(result);
+            else {
+                res.status(404).send({ error: true, message: "Email not found" })
+            }
         })
 
 
@@ -89,9 +94,9 @@ async function run() {
             const toy = req.body;
             const updateDoc = {
                 $set: {
-                    price : toy.price,
-                    quantity : toy.quantity,
-                    descriptions : toy.descriptions,
+                    price: toy.price,
+                    quantity: toy.quantity,
+                    descriptions: toy.descriptions,
                 }
             }
             const result = await toysCollection.updateOne(filter, updateDoc, options)
