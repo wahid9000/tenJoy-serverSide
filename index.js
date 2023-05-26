@@ -10,7 +10,7 @@ app.use(express.json());
 
 app.get('/', (req, res) => {
     res.send("TenJoy Server is running successfully")
-})
+}) 
 
 
 
